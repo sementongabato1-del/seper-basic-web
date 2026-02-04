@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Routine Tracker — All-in-One (12-ICT)</title>
+
+  <!-- Chart.js (for charts) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Link to CSS (provided as separate file) -->
+  <link rel="stylesheet" href="done2.css" />
+</head>
+<body>
+  <div id="app" class="app">
+
+    <!-- ========== HEADER ========== -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-dot" aria-hidden></div>
+        <div>
+          <h1>Routine Tracker</h1>
+          <div class="tagline">Artistic • Interactive • Pan mga GWAPO la</div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div id="currentUserLabel" class="current-user tiny-muted">Not signed in</div>
+
+        <!-- 3-dot menu (About, Contact, Testimonials, FAQ, Security) -->
+        <div class="menu3">
+          <button id="moreBtn" class="three-dot" title="More">⋯</button>
+          <div id="morePopup" class="popup card">
+            <a href="#" data-page="aboutPage" class="popup-link">About Us</a>
+            <a href="#" data-page="contactPage" class="popup-link">Contact Information</a>
+            <a href="#" data-page="testimonialsPage" class="popup-link">Testimonials & Reviews</a>
+            <a href="#" data-page="faqPage" class="popup-link">FAQ</a>
+            <a href="#" data-page="securityPage" class="popup-link">Security Protocol</a>
+          </div>
+        </div>
+
+        <button id="btnLogout" class="btn ghost" style="display:none">Log out</button>
+      </div>
+    </header>
+
+    <!-- ========== LAYOUT: LEFT NAV + MAIN ========== -->
+    <div class="layout">
+
+      <!-- LEFT NAV -->
+      <aside class="left">
+        <div class="card left-card">
+          <div class="left-top">
+            <strong>Navigation</strong>
+            <button id="btnHome" class="btn small">Home</button>
+          </div>
+
+          <nav class="nav">
+            <div class="nav-item active" data-view="authView" id="nav-auth">🔐 Sign In / Sign Up</div>
+            <div class="nav-item" data-view="routineView" id="nav-routine">🏃 Routine Tracker</div>
+            <div class="nav-item" data-view="eduPick" id="nav-edu">📚 Education Stuff</div>
+            <div class="nav-item" data-view="teacherView" id="nav-teacher">👩‍🏫 Teacher Dashboard</div>
+            <div class="nav-item" data-view="studentView" id="nav-student">👨‍🎓 Student Dashboard</div>
+            <div class="nav-item" data-view="messagesView" id="nav-messages">✉️ Messages</div>
+          </nav>
+
+          <div class="left-actions">
+            <button id="btnEduLeft" class="btn">Education Stuff</button>
+            <button id="btnExportStore" class="btn ghost">Export </button>
+            <button id="btnImportStore" class="btn ghost">Import </button>
+            <input id="importFileInput" type="file" accept="application/json" style="display:none" />
+            <button id="btnReset" class="btn ghost">Reset demo data</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+
+        <!-- ========== AUTH VIEW (first dashboard) ========== -->
+        <section id="authView" class="view card">
+          <div class="auth-grid">
+            <div class="auth-card card">
+              <h2>Create account</h2>
+              <p class="tiny-muted">Strict validation: password ≥10 chars, uppercase, number & special</p>
+
+              <label>Full name</label><input id="su_name" type="text" placeholder="Luffy" />
+              <label>Username</label><input id="su_username" type="text" placeholder="luffy123" />
+              <label>Email</label><input id="su_email" type="email" placeholder="name@school.edu" />
+              <label>Password</label><input id="su_password" type="password" placeholder="StrongPass!23" />
+              <label>Role</label>
+              <select id="su_role">
+                <option value="">Select role</option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="parent">Parent / Guardian</option>
+              </select>
+              <label>ID</label><input id="su_id" type="text" placeholder="S12345" />
+
+              <div class="row" style="margin-top:10px">
+                <button id="btnSignUp" class="btn">Sign Up</button>
+                <button id="btnShowSignIn" class="btn ghost">Have account? Sign In</button>
+              </div>
+              <div id="signupError" class="error"></div>
+              <small class="tiny-muted">Demo data stored in this browser (localStorage). Not for production.</small>
+            </div>
+
+            <div class="auth-card card" style="width:420px">
+              <h3 style="margin-top:0">Sign In</h3>
+              <label>Username or Email</label><input id="si_user" type="text" placeholder="username or email" />
+              <label>Password</label><input id="si_pass" type="password" placeholder="Your password" />
+              <div class="row" style="margin-top:10px">
+                <button id="btnSignIn" class="btn">Sign In</button>
+                <button id="btnShowSignUp" class="btn ghost">Create account</button>
+              </div>
+              <div id="signinError" class="error"></div>
+
+              <div style="margin-top:12px" class="tiny-muted">
+                Demo accounts: <strong>teacher1 / Teacher@123!</strong> &amp; <strong>student1 / Student@123!</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== ROUTINE VIEW (second dashboard) ========== -->
+        <section id="routineView" class="view card hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+               <h2 style="margin:0">Routine Tracker</h2>
+              <div class="tiny-muted">Calendar • Streaks • Improvements • Deadlines</div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="chip">Streak: <strong id="streakChip">0</strong></div>
+              <button id="btnMarkToday" class="btn">Mark today's routine done</button>
+            </div>
+          </div>
+
+          <div class="routine-body" style="display:flex;gap:16px;margin-top:12px">
+            <!-- calendar column -->
+            <div style="flex:1">
+              <div class="card">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                  <button id="calPrev" class="btn small">◀</button>
+                  <div id="monthYear" style="font-weight:800"></div>
+                  <button id="calNext" class="btn small">▶</button>
+                  <div style="margin-left:auto" class="tiny-muted">Click date to add deadline</div>
+                </div>
+
+                <div class="cal-head">
+                  <div class="h">Sun</div><div class="h">Mon</div><div class="h">Tue</div><div class="h">Wed</div><div class="h">Thu</div><div class="h">Fri</div><div class="h">Sat</div>
+                </div>
+
+                <div id="calendarGrid" class="calendar"></div>
+              </div>
+            </div>
+
+            <!-- right column -->
+            <div style="width:360px">
+              <div class="card">
+                <strong>Streak</strong>
+                <div style="display:flex;gap:12px;align-items:center;margin-top:12px" class="streak">
+                  <div class="flame">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2s4 3 4 6a4 4 0 1 1-8 0c0-3 4-6 4-6z" fill="#fb923c"/></svg>
+                  </div>
+                  <div>
+                    <div id="streakMain" style="font-size:30px;font-weight:800">0</div>
+                    <div class="tiny-muted">Days in a row</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between">
+                  <strong>Improvements</strong>
+                  <!-- toggle weekly/monthly -->
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <button id="chartToggleWeek" class="btn small active">Week</button>
+                    <button id="chartToggleMonth" class="btn small">Month</button>
+                  </div>
+                </div>
+
+                <!-- main prettier chart -->
+                <div id="mainChartWrap" style="height:220px;margin-top:12px">
+                  <canvas id="mainChart"></canvas>
+                </div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>Mini Sparkline</strong>
+                <div id="sparkWrap" style="height:60px;margin-top:8px"><canvas id="sparkChart"></canvas></div>
+                <strong style="display:block;margin-top:12px">Upcoming deadlines</strong>
+                <div id="deadlinesList" class="list" style="margin-top:8px"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== EDUCATION PICK ========== -->
+        <section id="eduPick" class="view card hidden">
+          <h2>Select Education Area</h2>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div class="card" style="flex:1;text-align:center">
+              <h3>Student</h3>
+              <p class="tiny-muted">Access quizzes, assignments and files</p>
+              <button id="toStudent" class="btn">Go to Student Dashboard</button>
+            </div>
+            <div class="card" style="flex:1;text-align:center">
+              <h3>Teacher</h3>
+              <p class="tiny-muted">Create quizzes, assignments, files and announcements</p>
+              <button id="toTeacher" class="btn">Go to Teacher Dashboard</button>
+            </div>
+          </div>
+        </section>
+
+        
+        <!-- ========== TEACHER VIEW (third dashboard) ========== -->
+        <section id="teacherView" class="view card hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Teacher Dashboard</h2>
+            <div class="tiny-muted">Create quizzes, assignments, files, announcements, and export results</div>
+          </div>
+
+          <div class="grid2" style="margin-top:12px">
+            <!-- left: editor -->
+            <div>
+              <div class="card">
+                <strong>Quiz Editor (visual)</strong>
+                <label>Quiz Title</label><input id="editorQuizTitle" placeholder="e.g., Algebra Quick Check" />
+                <label>Assign to (comma usernames or 'all')</label><input id="editorQuizTo" placeholder="student1,student2 or all" />
+
+                <div id="quizEditorArea" style="margin-top:10px"></div>
+
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button id="btnAddQuestion" class="btn">Add Question</button>
+                  <button id="btnCreateQuizVisual" class="btn">Create & Assign</button>
+                  <button id="btnClearQuizEditor" class="btn ghost">Clear</button>
+                </div>
+
+                <div style="margin-top:8px" class="tiny-muted">Add questions and options visually. Mark the correct option for each question.</div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>Assignments (visual)</strong>
+                <label>Title</label><input id="editorAssignTitle" />
+                <label>Description</label><textarea id="editorAssignDesc" rows="4"></textarea>
+                <label>Assign to</label><input id="editorAssignTo" placeholder="all or comma-separated usernames" />
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button id="btnCreateAssignVisual" class="btn">Create Assignment</button>
+                </div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>Upload Files (stored base64 locally)</strong>
+                <label>Choose files (pdf/images/video allowed)</label>
+                <input id="teacherFileInput" type="file" multiple />
+                <label>Assign to (comma usernames or 'all')</label><input id="teacherFileTo" placeholder="all" />
+                <div style="margin-top:8px">
+                  <button id="btnUploadFiles" class="btn">Upload & Store Locally</button>
+                </div>
+                <div id="teacherFilesList" class="list" style="margin-top:8px"></div>
+              </div>
+            </div>
+
+            <!-- right: announcements, search, results -->
+            <div>
+              <div class="card">
+                <strong>Announcements</strong>
+                <label>Title</label><input id="annTitle" />
+                <label>Message</label><textarea id="annMsg" rows="4"></textarea>
+                <label>Send to</label><input id="annTo" placeholder="all or student1,student2" />
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button id="btnSendAnnouncement" class="btn">Send Announcement</button>
+                </div>
+                <div id="annList" class="list" style="margin-top:8px"></div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>Search & Message Students</strong>
+                <input id="searchStudentInput" placeholder="Search name or username" />
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button id="btnSearchStudent" class="btn">Search</button>
+                </div>
+                <div id="searchResults" class="list" style="margin-top:8px"></div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>Quizzes & Results</strong>
+                <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+                  <div class="tiny-muted">Your created quizzes</div>
+                  <div><button id="btnExportCSV" class="btn small">Export CSV</button></div>
+                </div>
+                <div id="teacherQuizzesList" class="list" style="margin-top:8px"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== STUDENT VIEW (fourth dashboard) ========== -->
+        <section id="studentView" class="view card hidden">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h2>Student Dashboard</h2>
+            <div class="tiny-muted">Access assigned quizzes, assignments and resources</div>
+          </div>
+
+          <div class="grid2" style="margin-top:12px">
+            <div>
+              <div class="card">
+                <strong>Assigned Quizzes & Assignments</strong>
+                <div id="studentQuizzesList" class="list"></div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>My Assignments</strong>
+                <div id="studentAssignmentsList" class="list"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="card">
+                <strong>Files & Resources</strong>
+                <div id="studentFilesList" class="list"></div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>Announcements</strong>
+                <div id="studentAnnouncementsList" class="list"></div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <strong>Search Teachers & Message</strong>
+                <input id="searchTeacherInput" placeholder="Search teacher name or username" />
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button id="btnSearchTeacher" class="btn">Search</button>
+                </div>
+                <div id="teacherSearchResults" class="list" style="margin-top:8px"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== MESSAGES VIEW ========== -->
+        <section id="messagesView" class="view card hidden">
+          <h2>Messages</h2>
+          <div id="messagesList" class="list" style="margin-top:8px"></div>
+        </section>
+
+        
+        <!-- ========== POPUPS / PAGES FROM 3-DOT MENU ========== -->
+        <section id="aboutPage" class="view card hidden"><h3>About Us</h3><p class="tiny-muted">Routine Tracker — was made by drareg .</p></section>
+        <section id="contactPage" class="view card hidden"><h3>Contact</h3><p class="tiny-muted">Email: drareg@gmail.com
+          Number:0912434353
+        </p></section>
+        <section id="testimonialsPage" class="view card hidden"><h3>Testimonials & Reviews</h3><p class="tiny-muted">"Useful and neat" — Demo User</p></section>
+        <section id="faqPage" class="view card hidden"><h3>FAQ</h3><p class="tiny-muted">Is my DATA secure? Absofkinglutely.</p></section>
+        <section id="securityPage" class="view card hidden"><h3>Security Protocol</h3><p class="tiny-muted">Client-side validation only — server & encryption required for production.</p></section>
+
+        <footer class="footer">Routine Tracker — For individuals • Communication • For education</footer>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal root (script will create modals here) -->
+  <div id="modalRoot"></div>
+<!-- Guardian Dashboard Start -->
+<section id="guardian-dashboard">
+  <h2>Guardian Dashboard</h2>
+
+  <!-- Student Performance Summary -->
+  <div class="dashboard-summary">
+    <h3>Student Performance</h3>
+    <table id="performance-table">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Average Score</th>
+          <th>Quizzes Completed</th>
+          <th>Assignments Submitted</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example row: Replace dynamically with your data -->
+        <tr>
+          <td>John Doe</td>
+          <td>78%</td>
+          <td>3/5</td>
+          <td>2/4</td>
+          <td class="status-warning">⚠️ Missing Items</td>
+        </tr>
+        <tr>
+          <td>Jane Smith</td>
+          <td>92%</td>
+          <td>5/5</td>
+          <td>4/4</td>
+          <td class="status-ok">✅ On Track</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Warnings Section -->
+  <div class="dashboard-warnings">
+    <h3>Alerts</h3>
+    <ul id="alerts-list">
+      <!-- Example alerts -->
+      <li>John Doe: Missing 2 quizzes and 2 assignments.</li>
+      <li>Michael Lee: Missing 1 assignment.</li>
+    </ul>
+  </div>
+</section>
+<!-- Guardian Dashboard End -->
+ 
+  <!-- Link to JavaScript (provided as separate file) -->
+  <script src="done-3.js"></script>
+</body>
+</html>
